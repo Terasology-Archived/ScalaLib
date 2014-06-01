@@ -1,0 +1,125 @@
+import groovy.json.JsonSlurper
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'idea'
+
+wrapper {
+    gradleVersion '1.12'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://www.movingblocks.net:8081/artifactory/repo'
+    }
+}
+
+def moduleDepends = []
+def moduleFile = file('module.txt')
+
+// module.txt has to be there for a Terasology module
+if (!moduleFile.exists()) {
+    throw new GradleException("Failed to find module.txt for " + project.name)
+}
+
+// module.txt can be read as simple JSON file
+def slurper = new JsonSlurper()
+def moduleConfig = slurper.parseText(moduleFile.text)
+// get the module dependencies from module.txt
+for (dependency in moduleConfig.dependencies) {
+    moduleDepends += dependency.id
+}
+
+// get the module version from module.txt
+version = moduleConfig.version
+
+configurations {
+    includeInJar
+}
+
+dependencies {
+    includeInJar 'org.scala-lang:scala-library:2.11.1'
+    configurations.compile.extendsFrom(configurations.includeInJar)
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
+    // add dependency on latest Terasology engine
+    compile(group: 'org.terasology.engine', name: 'engine', version: '+', changing: true)
+
+    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile(group: 'org.terasology.engine', name: 'engine-tests', version: '+', changing: true)
+
+    // TODO: more complex module repository setups need some more work
+    // fetch module dependencies from MovingBlocks Artifactory
+    moduleDepends.each {
+        println "*** Attempting to fetch dependency module from MovingBlocks Artifactory for " + project.name + ": " + it
+        compile(group: 'org.terasology.modules', name: it, version: '+', changing: true)
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = false;
+        outputDir = file('build/classes')
+        testOutputDir = file('build/test/Classes')
+    }
+}
+
+task createSkeleton() {
+    mkdir('assets')
+    mkdir('overrides')
+    mkdir('deltas')
+    mkdir('src/main/java')
+    mkdir('src/main/scala')
+    mkdir('src/test/java')
+    mkdir('src/test/scala')
+}
+
+task syncAssets(type: Sync) {
+    from 'assets'
+    into 'build/classes/assets'
+}
+
+task syncOverrides(type: Sync) {
+    from 'overrides'
+    into 'build/classes/overrides'
+}
+
+task syncDeltas(type: Sync) {
+    from 'deltas'
+    into 'build/classes/deltas'
+}
+
+sourceSets {
+    main {
+        java {output.classesDir 'build/classes'}
+        scala {output.classesDir 'build/classes'}
+    }
+}
+
+jar {
+    doFirst {
+        copy {
+            from 'module.txt'
+            from configurations.includeInJar
+            into 'build/classes'
+        }
+    }
+    dependsOn syncAssets
+    dependsOn syncOverrides
+    dependsOn syncDeltas
+}
+
+task sourceJar(type: Jar) {
+    description = "Create a JAR with all sources"
+    from sourceSets.main.allSource
+    from sourceSets.test.allSource
+    classifiers = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    description = "Create a JAR with the JavaDoc for the java sources"
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
