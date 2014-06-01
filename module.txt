@@ -2,7 +2,7 @@
 	"id"                : "ScalaLib",
 	"version"           : "1.0.0",
 	"author"            : "skaldarnar",
-	"displayName"       : "Scala Runtime Library",
+	"displayName"       : "Scala Runtime Library Module",
 	"description"       : "Library module that supplies the Scala runtime library. See www.scala-lang.org for more information.",
 	"dependencies"      : [],
 	"isServerSideOnly"  : false
