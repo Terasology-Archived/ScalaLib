@@ -1,5 +1,7 @@
-import org.terasology.entitySystem.systems.{RegisterSystem, BaseComponentSystem}
-import org.terasology.logic.console.Command
+package org.terasology
+
+import org.terasology.entitySystem.systems.{BaseComponentSystem, RegisterSystem}
+import org.terasology.logic.console.commandSystem.annotations.Command
 
 @RegisterSystem
 class ScalaCommands extends BaseComponentSystem {

@@ -1,18 +1,35 @@
 import groovy.json.JsonSlurper
 
-apply plugin: 'java'
-apply plugin: 'scala'
-apply plugin: 'idea'
+plugins {
+    id "java"
+    id "scala"
+    id "idea"
+    id "com.jfrog.artifactory" version "3.1.0"
+}
 
 wrapper {
-    gradleVersion '1.12'
+    gradleVersion '2.8'
 }
 
 repositories {
     mavenCentral()
     maven {
-        url 'http://www.movingblocks.net:8081/artifactory/repo'
+        url 'http://artifactory.terasology.org:8081/artifactory/virtual-repo-live'
     }
+}
+
+artifactory {
+  contextUrl = 'http://artifactory.terasology.org:8081/artifactory'
+
+  resolve {
+    repository {
+      if (rootProject.hasProperty("artifactoryResolveRepo")) {
+        repoKey = "$artifactoryResolveRepo"
+      } else {
+        repoKey = "libs-release-local"
+      }
+    }
+  }
 }
 
 def moduleDepends = []
@@ -39,7 +56,7 @@ configurations {
 }
 
 dependencies {
-    includeInJar 'org.scala-lang:scala-library:2.11.1'
+    includeInJar 'org.scala-lang:scala-library:2.11.7'
     configurations.compile.extendsFrom(configurations.includeInJar)
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
     // add dependency on latest Terasology engine
@@ -115,7 +132,7 @@ task sourceJar(type: Jar) {
     description = "Create a JAR with all sources"
     from sourceSets.main.allSource
     from sourceSets.test.allSource
-    classifiers = 'sources'
+    classifier = 'sources'
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
