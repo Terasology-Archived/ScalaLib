@@ -1,6 +1,6 @@
 {
 	"id"                : "ScalaLib",
-	"version"           : "1.0.0",
+	"version"           : "1.0.1-SNAPSHOT",
 	"author"            : "skaldarnar",
 	"displayName"       : "Scala Runtime Library Module",
 	"description"       : "Library module that supplies the Scala runtime library. See www.scala-lang.org for more information.",
