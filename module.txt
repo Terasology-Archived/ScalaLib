@@ -1,9 +1,10 @@
 {
-	"id"                : "ScalaLib",
-	"version"           : "1.0.1-SNAPSHOT",
-	"author"            : "skaldarnar",
-	"displayName"       : "Scala Runtime Library Module",
-	"description"       : "Library module that supplies the Scala runtime library. See www.scala-lang.org for more information.",
-	"dependencies"      : [],
-	"isServerSideOnly"  : false
+    "language"          : "scala",
+    "id"                : "ScalaLib",
+    "version"           : "2.11.7-SNAPSHOT",
+    "author"            : "skaldarnar",
+    "displayName"       : "Scala Runtime Library Module",
+    "description"       : "Library module that supplies the Scala runtime library. See www.scala-lang.org. Version tied to embedded Scala.",
+    "dependencies"      : [],
+    "isServerSideOnly"  : false
 }

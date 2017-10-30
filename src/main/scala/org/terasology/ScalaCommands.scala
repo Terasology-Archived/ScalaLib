@@ -6,6 +6,8 @@ import org.terasology.logic.console.commandSystem.annotations.Command
 @RegisterSystem
 class ScalaCommands extends BaseComponentSystem {
 
+  val scalaVersion = scala.util.Properties.versionString
+
   @Command(shortDescription = "Scala test command", runOnServer = false)
-  def helloScala() = "Hello there, this is Scala =)"
+  def helloScala() = s"Hello there, this is Scala $scalaVersion =)"
 }
