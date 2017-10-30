@@ -4,7 +4,7 @@
     "version"           : "2.11.7-SNAPSHOT",
     "author"            : "skaldarnar",
     "displayName"       : "Scala Runtime Library Module",
-    "description"       : "Library module that supplies the Kotlin runtime library. See www.scala-lang.org. Version tied to embedded Scala.",
+    "description"       : "Library module that supplies the Scala runtime library. See www.scala-lang.org. Version tied to embedded Scala.",
     "dependencies"      : [],
     "isServerSideOnly"  : false
 }
